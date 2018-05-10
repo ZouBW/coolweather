@@ -28,6 +28,7 @@ import com.coolweather.android.util.HttpUtil;
 import com.coolweather.android.util.Utility;
 
 import java.io.IOException;
+import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -99,9 +100,13 @@ public class WeatherActivity extends AppCompatActivity {
             requestWeather(weatherId);
         });
         String bingPic = prefs.getString("bing_pic", null);
-        if(bingPic != null){
+//        String date = prefs.getString("today", null);
+//        Date now = new Date();
+//        String today = String.valueOf(now.getYear()) + String.valueOf(now.getMonth()) + String.valueOf(now.getDay());
+        if(bingPic != null ){
             Glide.with(this).load(bingPic).into(bingPicImg);
-        }else{
+        }
+        else{
             loadBingPic();
         }
 
@@ -159,7 +164,7 @@ public class WeatherActivity extends AppCompatActivity {
         String degree = weather.now.temperature + "℃";
         String weatherInfo = weather.now.more.info;
         titleCity.setText(cityName);
-        titleUpdateTime.setText(cityName);
+        titleUpdateTime.setText(updateTime);
         degreeText.setText(degree);
         weatherInfoText.setText(weatherInfo);
         forecastLayout.removeAllViews();
@@ -172,8 +177,8 @@ public class WeatherActivity extends AppCompatActivity {
             TextView minText = (TextView)view.findViewById(R.id.min_text);
             dateText.setText(forecast.date);
             infoText.setText(forecast.more.info);
-            dateText.setText(forecast.temperature.max);
-            dateText.setText(forecast.temperature.min);
+            maxText.setText(forecast.temperature.max);
+            minText.setText(forecast.temperature.min);
             forecastLayout.addView(view);
         }
         if(weather.aqi != null){
@@ -194,6 +199,7 @@ public class WeatherActivity extends AppCompatActivity {
     /**
      * 加载必应每日一图
      */
+
     private void loadBingPic(){
         String requestBingPic = "http://guolin.tech/api/bing_pic";
         HttpUtil.sendOkHttpRequest(requestBingPic, new Callback() {
@@ -207,7 +213,14 @@ public class WeatherActivity extends AppCompatActivity {
                 final String bingPic = response.body().string();
                 SharedPreferences.Editor editor = PreferenceManager.
                         getDefaultSharedPreferences(WeatherActivity.this).edit();
+                //日期不同，重新获取图片
+//                Date date = new Date();
+//                String today = String.valueOf(date.getYear()) + String.valueOf(date.getMonth())
+//                        + String.valueOf(date.getDay());
+
                 editor.putString("bing_pic", bingPic);
+//                editor.putString("today", today);
+                //尚未修改完，以上
                 editor.apply();
                 runOnUiThread(() -> {
                     Glide.with(WeatherActivity.this).load(bingPic).into(bingPicImg);
