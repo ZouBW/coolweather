@@ -51,6 +51,7 @@ public class WeatherActivity extends AppCompatActivity {
     private TextView sportText;
     private ImageView bingPicImg;
 
+    private  String weatherId;
     public SwipeRefreshLayout swipeRefresh;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +85,7 @@ public class WeatherActivity extends AppCompatActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences
                 (this);
         String weatherString = prefs.getString("weather", null);
-        final String weatherId;
+
         if(weatherString != null){
             //有缓存时直接解析天气数据
             Weather weather = Utility.handleWeatherResponse(weatherString);
@@ -118,6 +119,7 @@ public class WeatherActivity extends AppCompatActivity {
      * 根据天气id请求城市天气信息
      */
     public void requestWeather(final String weatherId){
+        this.weatherId = weatherId;
         String weatherUrl = "http://guolin.tech/api/weather?cityid=" +
                 weatherId + "&key=79cc0633a6f64c5391319b21898cbe6f";
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
